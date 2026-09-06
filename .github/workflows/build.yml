@@ -3,27 +3,30 @@ name: Build Expo App
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22          # ✅ Use Node 22 (LTS)
-          cache: 'npm'
+          node-version: 22              # ✅ Node 22 LTS (stable)
+          cache: 'npm'                  # Speeds up installs
 
       - name: Install dependencies
-        run: npm ci                 # ✅ Now package-lock.json exists
+        run: npm ci                    # ✅ Uses the lockfile
 
-      - name: Install Expo & EAS
+      - name: Install Expo & EAS CLI
         run: npm install -g expo-cli eas-cli
 
-      - name: Build Android
+      - name: Build Android (EAS)
         run: eas build --platform android --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
