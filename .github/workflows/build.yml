@@ -21,7 +21,7 @@ jobs:
           cache: 'npm'                  # Speeds up installs
 
       - name: Install dependencies
-        run: npm                      # ✅ Uses the lockfile
+        run: npm ci                  # ✅ Uses the lockfile
         working-directory: './'
 
       - name: Install Expo & EAS CLI
