@@ -3,20 +3,40 @@ name: Build Expo App
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm ci
-      - name: Install Expo CLI
+          cache: 'npm'   # Automatically caches node_modules
+
+      - name: Install dependencies (npm ci)
+        run: npm ci
+
+      - name: Install Expo CLI & EAS CLI globally
         run: npm install -g expo-cli eas-cli
-      - name: Build Android
+
+      - name: Build Android (EAS)
         run: eas build --platform android --non-interactive
         env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+          EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+
+      # Optionally, you can also build iOS if you have a Mac runner
+      # - name: Build iOS
+      #   run: eas build --platform ios --non-interactive
+      #   env:
+      #     EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      #     ...
