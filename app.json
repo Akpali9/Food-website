@@ -26,5 +26,14 @@
     "web": {
       "favicon": "./assets/favicon.png"
     }
+    {
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
+    }
+  }
+}
   }
 }
