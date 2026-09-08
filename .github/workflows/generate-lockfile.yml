@@ -2,8 +2,11 @@ name: Generate package-lock.json
 
 on:
   push:
-    branches: [ main ]       # runs on every push to main (you can change)
-  workflow_dispatch:         # allows manual trigger from Actions tab
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # ✅ Allows pushing commits
 
 jobs:
   generate:
