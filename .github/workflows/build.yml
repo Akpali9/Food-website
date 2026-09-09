@@ -2,7 +2,8 @@ name: Build Expo App (Android & iOS)
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -10,47 +11,65 @@ permissions:
 
 jobs:
   build-android:
+    name: Build Android APK
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
-      - run: npm ci
-      - run: npm install -g eas-cli
-      - run: eas init --force --non-interactive
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      - name: Verify Expo authentication
+        run: eas whoami
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-      - run: eas build --platform android --profile production --non-interactive
+
+      - name: Build Android APK
+        run: eas build --platform android --profile production --non-interactive --wait
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: GoalGetter-Android-APK
-          path: ~/expo/artifacts/*.apk
 
   build-ios:
-    runs-on: macos-latest   # iOS builds require macOS runner
+    name: Build iOS
+    runs-on: macos-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
-      - run: npm ci
-      - run: npm install -g eas-cli
-      - run: eas init --force --non-interactive
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      - name: Verify Expo authentication
+        run: eas whoami
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-      - run: eas build --platform ios --profile production --non-interactive
+
+      - name: Build iOS
+        run: eas build --platform ios --profile production --non-interactive --wait
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: GoalGetter-iOS-IPA
-          path: ~/expo/artifacts/*.ipa
