@@ -17,7 +17,8 @@
         "buildType": "apk"
       },
       "ios": {
-        "simulator": false
+        "simulator": false,
+        "distribution": "app-store"
       }
     }
   },
