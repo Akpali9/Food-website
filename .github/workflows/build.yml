@@ -151,6 +151,7 @@ jobs:
         run: eas whoami
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          
 
       # 6. Build iOS
       - name: Build iOS
